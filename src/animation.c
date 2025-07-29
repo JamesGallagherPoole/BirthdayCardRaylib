@@ -4,7 +4,6 @@
 
 Animation *CreateAnimation(Arena *arena, AnimationParams params) {
   Animation *animation = arena_alloc(arena, sizeof(Animation));
-  // Animation *animation = calloc(1, sizeof(Animation));
 
   animation->frame_rec =
       (Rectangle){params.frame_rec.x, params.frame_rec.y,

@@ -1,15 +1,27 @@
 #include "letter.h"
 #include "animation.h"
+#include "card.h"
 #include "raylib.h"
+#include "types.h"
 #include "utils.h"
+#include <string.h>
 
 Letter *CreateLetter(Arena *arena) {
   Letter *letter = arena_alloc(arena, sizeof(Letter));
 
-  letter->envelopeTexture = LoadTexture("assets/envelope.png");
   letter->pos = (Vector2){0, -200};
   letter->slideSpeed = 400;
   letter->showState = INVISIBLE;
+  letter->current_card_index = 0;
+
+  // Envelope
+  CardData cardData;
+  strcpy(cardData.cardEnvelopeData.title, "Happy Birthday");
+  strcpy(cardData.cardEnvelopeData.subtitle, "This is a subtitle text");
+  CardParams envelopeParams = {CARD_ENVELOPE, cardData,
+                               LoadTexture("assets/envelope.png")};
+
+  letter->cards[0] = CreateCard(arena, envelopeParams);
 
   AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
 
@@ -25,7 +37,7 @@ void UpdateLetter(Letter *letter) {
   int screen_height = GetScreenHeight();
 
   int center_y =
-      (int)(screen_height / 2) - (int)(letter->envelopeTexture.height / 2);
+      (int)(screen_height / 2) - (int)(letter->cards[0]->texture.height / 2);
 
   letter->pos.x = (int)(screen_width / 2) - (int)(200 / 2);
   switch (letter->showState) {
@@ -63,6 +75,6 @@ void UpdateLetter(Letter *letter) {
 }
 
 void DrawLetter(Letter *letter) {
-  DrawTextureRec(letter->envelopeTexture, letter->animation->frame_rec,
+  DrawTextureRec(letter->cards[0]->texture, letter->animation->frame_rec,
                  letter->pos, WHITE);
 }
