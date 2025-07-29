@@ -2,6 +2,7 @@
 #define LETTER_H
 
 #include "animation.h"
+#include "arena.h"
 #include "raylib.h"
 #include "utils.h"
 
@@ -13,8 +14,7 @@ typedef struct {
   Animation *animation;
 } Letter;
 
-Letter *CreateLetter(void);
-void FreeLetter(Letter *letter);
+Letter *CreateLetter(Arena *arena);
 void UpdateLetter(Letter *letter);
 void DrawLetter(Letter *letter);
 

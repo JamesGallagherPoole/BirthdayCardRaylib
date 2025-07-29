@@ -1,6 +1,7 @@
 #ifndef CARD_ANIMATION_H
 #define CARD_ANIMATION_H
 
+#include "arena.h"
 #include "raylib.h"
 
 typedef struct {
@@ -20,8 +21,7 @@ typedef struct {
   bool loop;
 } AnimationParams;
 
-Animation *CreateAnimation(AnimationParams params);
-void FreeAnimation(Animation *animation);
+Animation *CreateAnimation(Arena *arena, AnimationParams params);
 void PlayAnimation(Animation *animation);
 void UpdateAnimation(Animation *animation);
 

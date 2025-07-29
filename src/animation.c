@@ -1,9 +1,10 @@
 #include "animation.h"
+#include "arena.h"
 #include "raylib.h"
-#include <stdlib.h>
 
-Animation *CreateAnimation(AnimationParams params) {
-  Animation *animation = calloc(1, sizeof(Animation));
+Animation *CreateAnimation(Arena *arena, AnimationParams params) {
+  Animation *animation = arena_alloc(arena, sizeof(Animation));
+  // Animation *animation = calloc(1, sizeof(Animation));
 
   animation->frame_rec =
       (Rectangle){params.frame_rec.x, params.frame_rec.y,
@@ -15,7 +16,6 @@ Animation *CreateAnimation(AnimationParams params) {
   return animation;
 }
 
-void FreeAnimation(Animation *animation) { free(animation); }
 void PlayAnimation(Animation *animation) { animation->is_playing = true; }
 
 void UpdateAnimation(Animation *animation) {

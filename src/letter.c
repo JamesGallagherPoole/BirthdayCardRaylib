@@ -1,11 +1,10 @@
 #include "letter.h"
 #include "animation.h"
 #include "raylib.h"
-#include "stdlib.h"
 #include "utils.h"
 
-Letter *CreateLetter(void) {
-  Letter *letter = malloc(sizeof(Letter));
+Letter *CreateLetter(Arena *arena) {
+  Letter *letter = arena_alloc(arena, sizeof(Letter));
 
   letter->envelopeTexture = LoadTexture("assets/envelope.png");
   letter->pos = (Vector2){0, -200};
@@ -14,14 +13,9 @@ Letter *CreateLetter(void) {
 
   AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
 
-  letter->animation = CreateAnimation(animationParams);
+  letter->animation = CreateAnimation(arena, animationParams);
 
   return letter;
-}
-
-void FreeLetter(Letter *letter) {
-  FreeAnimation(letter->animation);
-  free(letter);
 }
 
 void UpdateLetter(Letter *letter) {

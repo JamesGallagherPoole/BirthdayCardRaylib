@@ -1,6 +1,8 @@
+#define ARENA_IMPLEMENTATION
+#include "arena.h"
+
 #include "letter.h"
 #include "raylib.h"
-#include <stdlib.h>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -9,18 +11,21 @@
 Camera2D camera = {0};
 Vector3 cubePosition = {0};
 Letter *letter = NULL;
+Arena *arena = NULL;
 
-static void UpdateDrawFrame(void); // Update and draw one frame
+static void UpdateDrawFrame(void); // Update and one frame
 
 int main() {
-  // Initialization
+  // 1kB
+  arena = arena_create(1024);
+
   //--------------------------------------------------------------------------------------
   const int screenWidth = 800;
   const int screenHeight = 450;
 
   InitWindow(screenWidth, screenHeight, "happy birthday again!");
 
-  letter = CreateLetter();
+  letter = CreateLetter(arena);
 
   camera.target = (Vector2){0.0f, 0.0f};
 
@@ -37,8 +42,8 @@ int main() {
   }
 #endif
 
-  FreeLetter(letter);
   // De-Initialization
+  arena_destroy(arena);
   //--------------------------------------------------------------------------------------
   CloseWindow(); // Close window and OpenGL context
   //--------------------------------------------------------------------------------------
