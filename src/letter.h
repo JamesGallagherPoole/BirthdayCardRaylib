@@ -1,13 +1,16 @@
 #ifndef LETTER_H
 #define LETTER_H
 
+#include "animation.h"
 #include "raylib.h"
 #include "utils.h"
 
 typedef struct {
   Texture2D envelopeTexture;
   Vector2 pos;
-  ShowState ShowState;
+  float slideSpeed;
+  ShowState showState;
+  Animation *animation;
 } Letter;
 
 Letter *CreateLetter(void);
