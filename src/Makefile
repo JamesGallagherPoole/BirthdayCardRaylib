@@ -33,6 +33,7 @@ PROJECT_NAME          ?= birthday-card-raylib
 PROJECT_VERSION       ?= 1.0
 PROJECT_BUILD_PATH    ?= .
 PROJECT_SOURCE_FILES  ?= $(wildcard *.c) $(wildcard src/*.c)
+OBJDIR := build/objs
 
 # raylib library variables
 RAYLIB_SRC_PATH       ?= /home/james/Extras/raylib/src
@@ -314,7 +315,7 @@ endif
 
 # Define all object files from source files
 #------------------------------------------------------------------------------------------------
-OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
+OBJS = $(patsubst %.c, $(OBJDIR)/%.o, $(notdir $(PROJECT_SOURCE_FILES)))
 
 # Define processes to execute
 #------------------------------------------------------------------------------------------------
@@ -338,8 +339,10 @@ $(PROJECT_NAME): $(OBJS)
 
 # Compile source files
 # NOTE: This pattern will compile every module defined on $(OBJS)
-%.o: %.c
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
+
 
 # Clean everything
 clean:
