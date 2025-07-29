@@ -44,9 +44,10 @@ typedef struct {
   Vector2 pos;
   float slideSpeed;
   ShowState showState;
-  Animation *animation;
+  Animation *animation; // TODO: To be moved inside the envelope data
   int current_card_index;
-  Card *cards[3];
+  int numberOfCards;
+  Card *cards[];
 } Letter;
 
 #endif

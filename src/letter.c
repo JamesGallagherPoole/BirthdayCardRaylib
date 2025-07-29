@@ -4,15 +4,19 @@
 #include "raylib.h"
 #include "types.h"
 #include "utils.h"
+#include <stddef.h>
 #include <string.h>
 
 Letter *CreateLetter(Arena *arena) {
-  Letter *letter = arena_alloc(arena, sizeof(Letter));
+  size_t n = 1;
+  Letter *letter = arena_alloc(arena, sizeof(Letter) + sizeof(Card *) * n);
 
   letter->pos = (Vector2){0, -200};
   letter->slideSpeed = 400;
   letter->showState = INVISIBLE;
   letter->current_card_index = 0;
+
+  letter->numberOfCards = n;
 
   // Envelope
   CardData cardData;
@@ -49,25 +53,14 @@ void UpdateLetter(Letter *letter) {
       letter->pos.y += letter->slideSpeed * GetFrameTime();
     } else {
       letter->showState = VISIBLE;
+      // Set the first card (envelope) as visible
+      letter->cards[0]->showState = VISIBLE;
     }
     break;
   case VISIBLE:
-    if (IsKeyPressed(KEY_SPACE)) {
-
-      PlayAnimation(letter->animation);
-    }
-
-    if (letter->animation->current_frame > 0 &&
-        !letter->animation->is_playing) {
-      letter->showState = EXIT;
-    }
+    UpdateCard(letter, letter->cards[letter->current_card_index]);
     break;
   case EXIT:
-    if (letter->pos.y < screen_height + 200) {
-      letter->pos.y += letter->slideSpeed * GetFrameTime();
-    } else {
-      letter->showState = DONE;
-    }
     break;
   case DONE:
     break;
@@ -75,6 +68,5 @@ void UpdateLetter(Letter *letter) {
 }
 
 void DrawLetter(Letter *letter) {
-  DrawTextureRec(letter->cards[0]->texture, letter->animation->frame_rec,
-                 letter->pos, WHITE);
+  DrawCard(letter, letter->cards[letter->current_card_index]);
 }

@@ -1,5 +1,6 @@
 #include "card.h"
 #include "raylib.h"
+#include "raymath.h"
 #include "utils.h"
 
 Card *CreateCard(Arena *arena, CardParams cardParams) {
@@ -19,9 +20,20 @@ void UpdateCard(Letter *letter, Card *card) {
   if (card->showState == DONE) {
     return;
   }
+  int screen_height = GetScreenHeight();
 
   switch (card->cardType) {
   case CARD_ENVELOPE:
+    if (card->showState == VISIBLE) {
+      if (IsKeyPressed(KEY_SPACE)) {
+        PlayAnimation(letter->animation);
+      }
+
+      if (letter->animation->current_frame > 0 &&
+          !letter->animation->is_playing) {
+        card->isFinished = true;
+      }
+    }
 
     break;
   case CARD_TEXT:
@@ -34,17 +46,30 @@ void UpdateCard(Letter *letter, Card *card) {
   }
 
   switch (card->showState) {
-
   case INVISIBLE:
   case ENTER:
     break;
   case VISIBLE:
-
+    if (card->isFinished) {
+      // Press again to dismiss
+      if (IsKeyPressed(KEY_SPACE)) {
+        card->showState = EXIT;
+      }
+    }
+    break;
   case EXIT:
     // Animate Out
+    if (card->pos.y < screen_height + 200) {
+      card->pos.y += letter->slideSpeed * GetFrameTime();
+    } else {
+      card->showState = DONE;
+    }
   case DONE:
     break;
   }
 }
 
-void DrawCard(Letter *letter, Card *card) {}
+void DrawCard(Letter *letter, Card *card) {
+  DrawTextureRec(card->texture, letter->animation->frame_rec,
+                 Vector2Add(letter->pos, card->pos), WHITE);
+}
