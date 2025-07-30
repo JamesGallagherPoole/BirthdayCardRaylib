@@ -84,6 +84,22 @@ void UpdateCard(Letter *letter, Card *card) {
 }
 
 void DrawCard(Letter *letter, Card *card) {
-  DrawTextureRec(card->texture, letter->animation->frame_rec,
-                 Vector2Add(letter->pos, card->pos), WHITE);
+  Vector2 globalPos = Vector2Add(letter->pos, card->pos);
+  DrawTextureRec(card->texture, letter->animation->frame_rec, globalPos, WHITE);
+
+  switch (card->cardType) {
+  case CARD_ENVELOPE: {
+    Vector2 titlePos = Vector2Add(globalPos, (Vector2){50, 50});
+    DrawText(card->cardData.cardEnvelopeData.title, titlePos.x, titlePos.y, 15,
+             BLACK);
+    break;
+  }
+  case CARD_TEXT: {
+    Vector2 textPos = Vector2Add(globalPos, (Vector2){50, 50});
+    DrawText(card->cardData.cardTextData.text, textPos.x, textPos.y, 15, BLACK);
+    break;
+  }
+  case CARD_IMAGE:
+    break;
+  }
 }
