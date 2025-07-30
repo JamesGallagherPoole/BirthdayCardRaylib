@@ -8,15 +8,18 @@
 #include <string.h>
 
 Letter *CreateLetter(Arena *arena) {
-  size_t n = 1;
-  Letter *letter = arena_alloc(arena, sizeof(Letter) + sizeof(Card *) * n);
+  size_t numberOfCards = 2;
+  Letter *letter =
+      arena_alloc(arena, sizeof(Letter) + sizeof(Card *) * numberOfCards);
 
   letter->pos = (Vector2){0, -200};
   letter->slideSpeed = 400;
   letter->showState = INVISIBLE;
   letter->current_card_index = 0;
 
-  letter->numberOfCards = n;
+  letter->numberOfCards = numberOfCards;
+  AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
+  letter->animation = CreateAnimation(arena, animationParams);
 
   // Envelope
   CardData cardData;
@@ -24,12 +27,14 @@ Letter *CreateLetter(Arena *arena) {
   strcpy(cardData.cardEnvelopeData.subtitle, "This is a subtitle text");
   CardParams envelopeParams = {CARD_ENVELOPE, cardData,
                                LoadTexture("assets/envelope.png")};
-
   letter->cards[0] = CreateCard(arena, envelopeParams);
 
-  AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
-
-  letter->animation = CreateAnimation(arena, animationParams);
+  // First Card
+  CardData firstCardData;
+  strcpy(firstCardData.cardTextData.text, "First Card!");
+  CardParams firstCardParams = {CARD_TEXT, firstCardData,
+                                LoadTexture("assets/inner_card.png")};
+  letter->cards[1] = CreateCard(arena, firstCardParams);
 
   return letter;
 }
@@ -68,5 +73,11 @@ void UpdateLetter(Letter *letter) {
 }
 
 void DrawLetter(Letter *letter) {
+  if (letter->current_card_index < letter->numberOfCards - 1) {
+    if (letter->cards[letter->current_card_index + 1]->showState == ENTER) {
+      DrawCard(letter, letter->cards[letter->current_card_index + 1]);
+    }
+  }
+
   DrawCard(letter, letter->cards[letter->current_card_index]);
 }

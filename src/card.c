@@ -25,6 +25,11 @@ void UpdateCard(Letter *letter, Card *card) {
   switch (card->cardType) {
   case CARD_ENVELOPE:
     if (card->showState == VISIBLE) {
+
+      if (letter->current_card_index < letter->numberOfCards - 1) {
+        letter->cards[letter->current_card_index + 1]->showState = ENTER;
+      }
+
       if (IsKeyPressed(KEY_SPACE)) {
         PlayAnimation(letter->animation);
       }
@@ -54,6 +59,10 @@ void UpdateCard(Letter *letter, Card *card) {
       // Press again to dismiss
       if (IsKeyPressed(KEY_SPACE)) {
         card->showState = EXIT;
+
+        if (letter->current_card_index < letter->numberOfCards - 1) {
+          letter->cards[letter->current_card_index + 1]->showState = ENTER;
+        }
       }
     }
     break;
@@ -63,6 +72,11 @@ void UpdateCard(Letter *letter, Card *card) {
       card->pos.y += letter->slideSpeed * GetFrameTime();
     } else {
       card->showState = DONE;
+
+      if (letter->current_card_index < letter->numberOfCards - 1) {
+        letter->current_card_index++;
+        letter->cards[letter->current_card_index]->showState = VISIBLE;
+      }
     }
   case DONE:
     break;
