@@ -87,25 +87,25 @@ void DrawCard(Letter *letter, Card *card) {
   Vector2 globalPos = Vector2Add(letter->pos, card->pos);
 
   Vector2 desired_dimensions = GetScaledUpDimensions(200, card->texture.height);
-
   int half_padding = GetWindowPadding() / 2;
   Rectangle expandedRec = (Rectangle){
       half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
 
-  // DrawTextureRec(card->texture, letter->animation->frame_rec, globalPos,
-  // WHITE);
   DrawTexturePro(card->texture, letter->animation->frame_rec, expandedRec,
                  (Vector2){0, 0}, 0, WHITE);
 
   switch (card->cardType) {
   case CARD_ENVELOPE: {
-    Vector2 titlePos = Vector2Add(globalPos, (Vector2){50, 50});
-    DrawText(card->cardData.cardEnvelopeData.title, titlePos.x, titlePos.y, 15,
+    Vector2 scaledPos = ScalePointBasedOnRef(200, (Vector2){0, 50});
+    Vector2 titlePos =
+        Vector2Add(globalPos, (Vector2){scaledPos.x, scaledPos.y});
+    DrawText(card->cardData.cardEnvelopeData.title, titlePos.x, titlePos.y, 30,
              BLACK);
     break;
   }
   case CARD_TEXT: {
-    Vector2 textPos = Vector2Add(globalPos, (Vector2){50, 50});
+    Vector2 textPos =
+        Vector2Add(globalPos, ScalePointBasedOnRef(200, (Vector2){0, 30}));
     DrawText(card->cardData.cardTextData.text, textPos.x, textPos.y, 15, BLACK);
     break;
   }
