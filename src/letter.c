@@ -93,3 +93,13 @@ void DrawLetter(Letter *letter) {
 
   DrawCard(letter, letter->cards[letter->current_card_index]);
 }
+
+void DrawLetterUi(Letter *letter) {
+  int screenHeight = GetScreenHeight();
+  if (letter->cards[letter->current_card_index]->showState == VISIBLE &&
+      letter->cards[letter->current_card_index]->isFinished) {
+    DrawText("Press Space to Continue", 40, screenHeight - 30, 20, DARKGRAY);
+  }
+
+  // TODO: Call Card specific Ui
+}

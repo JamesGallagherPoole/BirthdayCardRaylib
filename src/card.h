@@ -12,7 +12,7 @@ typedef struct {
 } CardParams;
 
 Card *CreateCard(Arena *arena, CardParams cardParams);
-void DrawCard(Letter *letter, Card *card);
 void UpdateCard(Letter *letter, Card *card);
+void DrawCard(Letter *letter, Card *card);
 
 #endif

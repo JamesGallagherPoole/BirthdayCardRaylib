@@ -64,10 +64,7 @@ static void UpdateDrawFrame(void) {
 
   ClearBackground(RAYWHITE);
 
-  BeginMode2D(camera);
-
-  EndMode2D();
-
+  DrawLetterUi(letter);
   DrawText("Happy Birthday", 10, 40, 20, DARKGRAY);
 
   DrawFPS(10, 10);
