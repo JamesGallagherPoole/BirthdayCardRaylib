@@ -1,4 +1,5 @@
 #include "card.h"
+#include "animation.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "utils.h"
@@ -34,8 +35,11 @@ void UpdateCard(Letter *letter, Card *card) {
         PlayAnimation(letter->animation);
       }
 
-      if (letter->animation->current_frame > 0 &&
-          !letter->animation->is_playing) {
+      if (IsKeyReleased(KEY_SPACE)) {
+        StopAnimation(letter->animation);
+      }
+
+      if (letter->animation->is_finished) {
         card->isFinished = true;
       }
     }
@@ -47,6 +51,9 @@ void UpdateCard(Letter *letter, Card *card) {
     }
     break;
   case CARD_IMAGE:
+    if (!card->isFinished) {
+      card->isFinished = true;
+    }
     break;
   }
 

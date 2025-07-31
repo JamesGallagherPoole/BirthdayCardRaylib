@@ -8,7 +8,7 @@
 #include <string.h>
 
 Letter *CreateLetter(Arena *arena) {
-  size_t numberOfCards = 2;
+  size_t numberOfCards = 3;
   Letter *letter =
       arena_alloc(arena, sizeof(Letter) + sizeof(Card *) * numberOfCards);
 
@@ -30,11 +30,21 @@ Letter *CreateLetter(Arena *arena) {
   letter->cards[0] = CreateCard(arena, envelopeParams);
 
   // First Card
+  // TODO: Move card background to a shared handle or pointer
   CardData firstCardData;
   strcpy(firstCardData.cardTextData.text, "First Card!");
   CardParams firstCardParams = {CARD_TEXT, firstCardData,
                                 LoadTexture("assets/inner_card.png")};
   letter->cards[1] = CreateCard(arena, firstCardParams);
+
+  // Second Card
+  CardData secondCardData;
+  secondCardData.cardImageData.texture = LoadTexture("assets/james.jpg");
+  strcpy(secondCardData.cardImageData.text, "This is an image caption");
+  CardParams secondCardParams = {CARD_IMAGE, secondCardData,
+                                 LoadTexture("assets/inner_card.png")};
+
+  letter->cards[2] = CreateCard(arena, secondCardParams);
 
   return letter;
 }

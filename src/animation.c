@@ -10,12 +10,19 @@ Animation *CreateAnimation(Arena *arena, AnimationParams params) {
                   params.frame_rec.width, params.frame_rec.height};
   animation->frame_time = params.frame_time;
   animation->frame_count = params.frame_count;
+  animation->time = 0.0;
   animation->loop = params.loop;
+  animation->is_playing = false;
+  animation->is_finished = false;
 
   return animation;
 }
 
 void PlayAnimation(Animation *animation) { animation->is_playing = true; }
+void StopAnimation(Animation *animation) {
+  animation->is_playing = false;
+  animation->time = 0.0;
+}
 
 void UpdateAnimation(Animation *animation) {
   if (animation->is_playing) {
@@ -31,6 +38,7 @@ void UpdateAnimation(Animation *animation) {
       } else {
         animation->current_frame = animation->frame_count - 1;
         animation->is_playing = false;
+        animation->is_finished = true;
       }
     }
   }

@@ -11,6 +11,7 @@ typedef struct {
   float frame_time;
   float time;
   bool is_playing;
+  bool is_finished;
   bool loop;
 } Animation;
 
@@ -23,6 +24,7 @@ typedef struct {
 
 Animation *CreateAnimation(Arena *arena, AnimationParams params);
 void PlayAnimation(Animation *animation);
+void StopAnimation(Animation *animation);
 void UpdateAnimation(Animation *animation);
 
 #endif

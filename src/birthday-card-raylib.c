@@ -17,7 +17,7 @@ static void UpdateDrawFrame(void); // Update and one frame
 
 int main() {
   // 1kB
-  arena = arena_create(1024);
+  arena = arena_create(1024 * 1024);
 
   //--------------------------------------------------------------------------------------
   const int screenWidth = 800;
