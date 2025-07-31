@@ -85,7 +85,17 @@ void UpdateCard(Letter *letter, Card *card) {
 
 void DrawCard(Letter *letter, Card *card) {
   Vector2 globalPos = Vector2Add(letter->pos, card->pos);
-  DrawTextureRec(card->texture, letter->animation->frame_rec, globalPos, WHITE);
+
+  Vector2 desired_dimensions = GetScaledUpDimensions(200, card->texture.height);
+
+  int half_padding = GetWindowPadding() / 2;
+  Rectangle expandedRec = (Rectangle){
+      half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
+
+  // DrawTextureRec(card->texture, letter->animation->frame_rec, globalPos,
+  // WHITE);
+  DrawTexturePro(card->texture, letter->animation->frame_rec, expandedRec,
+                 (Vector2){0, 0}, 0, WHITE);
 
   switch (card->cardType) {
   case CARD_ENVELOPE: {

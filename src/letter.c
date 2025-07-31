@@ -45,8 +45,10 @@ void UpdateLetter(Letter *letter) {
   int screen_width = GetScreenWidth();
   int screen_height = GetScreenHeight();
 
-  int center_y =
-      (int)(screen_height / 2) - (int)(letter->cards[0]->texture.height / 2);
+  Vector2 desired_dimensions =
+      GetScaledUpDimensions(200, letter->cards[0]->texture.height);
+
+  int center_y = (int)(screen_height / 2) - (int)(desired_dimensions.y / 2);
 
   letter->pos.x = (int)(screen_width / 2) - (int)(200 / 2);
   switch (letter->showState) {

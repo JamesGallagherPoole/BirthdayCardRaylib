@@ -23,6 +23,8 @@ int main() {
   const int screenWidth = 800;
   const int screenHeight = 450;
 
+  int configFlags = FLAG_WINDOW_RESIZABLE;
+  SetConfigFlags(configFlags);
   InitWindow(screenWidth, screenHeight, "happy birthday again!");
 
   letter = CreateLetter(arena);
