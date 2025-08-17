@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "utils.h"
+#include <stdint.h>
 
 Card CreateCard(CardParams cardParams) {
   Card card;
@@ -122,18 +123,38 @@ void DrawCard(Letter *letter, Card *card) {
     break;
   }
   case CARD_IMAGE: {
-    Vector2 scaledDimensions = ScalePointBasedOnRef(
-        card->cardData.cardImageData.texture.width,
-        (Vector2){card->cardData.cardImageData.texture.width,
-                  card->cardData.cardImageData.texture.height});
-    int half_padding = GetWindowPadding() / 2;
-    Rectangle expandedRec = (Rectangle){half_padding, globalPos.y,
-                                        scaledDimensions.x, scaledDimensions.y};
+    Texture2D tex = card->cardData.cardImageData.texture;
 
-    DrawTexturePro(card->cardData.cardImageData.texture,
-                   letter->animation->frame_rec, expandedRec, (Vector2){0, 0},
-                   0, WHITE);
+    Vector2 size = GetScaledUpDimensions(200, card->texture.height);
 
+    Rectangle cardRect = (Rectangle){half_padding, globalPos.y, size.x, size.y};
+
+    // Inner content area
+    int32_t inner_pad = 50;
+    Rectangle content = (Rectangle){
+        cardRect.x + inner_pad, cardRect.y + inner_pad,
+        cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
+
+    // Fit image into content box, preserving aspect
+    float sx = content.width / (float)tex.width;
+    float sy = content.height / (float)tex.height;
+    float s = (sx < sy) ? sx : sy;
+
+    float w = tex.width * s;
+    float h = tex.height * s;
+    float x = content.x + (content.width - w) * 0.5f;
+    float y = content.y + (content.height - h) * 0.5f;
+
+    // Draw full texture -> fitted destination
+    Rectangle src = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
+    Rectangle dst = (Rectangle){x, y, w, h};
+
+    DrawTexturePro(tex, src, dst, (Vector2){0, 0}, 0, WHITE);
+
+    Vector2 textPos =
+        Vector2Add(globalPos, ScalePointBasedOnRef(200, (Vector2){0, 30}));
+    DrawText(card->cardData.cardImageData.text, textPos.x, textPos.y, 15,
+             BLACK);
     break;
   }
   }

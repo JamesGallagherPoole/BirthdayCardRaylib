@@ -24,9 +24,15 @@ typedef struct {
   char subtitle[128];
 } CardEnvelopeData;
 
+typedef struct {
+  Texture2D texture;
+  char text[128];
+} CardImageData;
+
 typedef union {
   CardTextData cardTextData;
   CardEnvelopeData cardEnvelopeData;
+  CardImageData cardImageData;
 } CardData;
 
 typedef struct {
