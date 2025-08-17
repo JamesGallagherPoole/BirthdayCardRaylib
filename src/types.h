@@ -4,6 +4,7 @@
 #include "animation.h"
 #include "raylib.h"
 #include "utils.h"
+#include <math.h>
 #include <stdint.h>
 
 /*
@@ -13,6 +14,7 @@ typedef enum {
   CARD_ENVELOPE,
   CARD_TEXT,
   CARD_IMAGE,
+  CARD_BOAT,
 } CardType;
 
 typedef struct {
@@ -27,12 +29,24 @@ typedef struct {
 typedef struct {
   Texture2D texture;
   char text[128];
+  Color textColour;
 } CardImageData;
+
+typedef struct {
+  Texture2D boatTex;
+  float_t boatPosX;
+  float_t boatAccelX;
+  float_t boatVelX;
+  float_t boatTopSpeed;
+  float_t accel;
+  float_t friction;
+} AskoyBoatData;
 
 typedef union {
   CardTextData cardTextData;
   CardEnvelopeData cardEnvelopeData;
   CardImageData cardImageData;
+  AskoyBoatData askoyBoatData;
 } CardData;
 
 typedef struct {

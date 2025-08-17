@@ -9,7 +9,7 @@
 #include <string.h>
 
 Letter *CreateLetter(Arena *arena) {
-  size_t numberOfCards = 3;
+  size_t numberOfCards = 4;
   Letter *letter = arena_alloc(arena, sizeof(Letter));
 
   letter->pos = (Vector2){0, -200};
@@ -31,6 +31,18 @@ Letter *CreateLetter(Arena *arena) {
 
   CardArray_Push(letter->cards, CreateCard(envelopeParams));
 
+  CardData boatCardData;
+  boatCardData.askoyBoatData.boatTex = LoadTexture("assets/fergen.png");
+  boatCardData.askoyBoatData.boatPosX = 0.0f;
+  boatCardData.askoyBoatData.boatVelX = 0.0f;
+  boatCardData.askoyBoatData.boatAccelX = 0.0f;
+  boatCardData.askoyBoatData.boatTopSpeed = 70.0f;
+  boatCardData.askoyBoatData.accel = 100.0f;
+  boatCardData.askoyBoatData.friction = 50.0f;
+  CardParams boatCardParams = {CARD_BOAT, boatCardData,
+                               LoadTexture("assets/inner_card.png")};
+  CardArray_Push(letter->cards, CreateCard(boatCardParams));
+
   // First Card
   // TODO: Move card background to a shared handle or pointer
   CardData firstCardData;
@@ -42,6 +54,7 @@ Letter *CreateLetter(Arena *arena) {
   // Second Card
   CardData secondCardData;
   secondCardData.cardImageData.texture = LoadTexture("assets/james.jpg");
+  secondCardData.cardImageData.textColour = WHITE;
   strcpy(secondCardData.cardImageData.text, "This is an image caption");
   CardParams secondCardParams = {CARD_IMAGE, secondCardData,
                                  LoadTexture("assets/inner_card.png")};

@@ -3,6 +3,7 @@
 #include "custom_arrays.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "types.h"
 #include "utils.h"
 #include <stdint.h>
 
@@ -58,6 +59,30 @@ void UpdateCard(Letter *letter, Card *card) {
     if (!card->isFinished) {
       card->isFinished = true;
     }
+    break;
+  case CARD_BOAT:
+    if (card->cardData.askoyBoatData.boatPosX >= 550) {
+      card->isFinished = true;
+    }
+
+    AskoyBoatData *data = &card->cardData.askoyBoatData;
+
+    if (IsKeyDown(KEY_SPACE)) {
+      data->boatVelX += data->accel * GetFrameTime();
+    } else {
+      // Apply friction
+      int32_t sign;
+      if (data->boatVelX >= 0) {
+        sign = 1;
+      }
+      if (data->boatVelX < 0) {
+        sign = -1;
+      }
+      data->boatVelX -= sign * data->friction * GetFrameTime();
+    }
+
+    data->boatVelX = Clamp(data->boatVelX, 0, data->boatTopSpeed);
+    data->boatPosX += data->boatVelX * GetFrameTime();
     break;
   }
 
@@ -152,10 +177,19 @@ void DrawCard(Letter *letter, Card *card) {
     DrawTexturePro(tex, src, dst, (Vector2){0, 0}, 0, WHITE);
 
     Vector2 textPos =
-        Vector2Add(globalPos, ScalePointBasedOnRef(200, (Vector2){0, 30}));
-    DrawText(card->cardData.cardImageData.text, textPos.x, textPos.y, 15,
-             BLACK);
+        Vector2Add(globalPos, ScalePointBasedOnRef(200, (Vector2){0, 100}));
+    DrawText(card->cardData.cardImageData.text, textPos.x, textPos.y, 20,
+             card->cardData.cardImageData.textColour);
     break;
+  case CARD_BOAT: {
+    AskoyBoatData *data = &card->cardData.askoyBoatData;
+
+    Vector2 globalBoatPos =
+        (Vector2){globalPos.x - 250 + data->boatPosX, globalPos.y + 250};
+
+    DrawTexture(data->boatTex, globalBoatPos.x, globalBoatPos.y, WHITE);
+    break;
+  }
   }
   }
 }
