@@ -4,6 +4,7 @@
 #include "animation.h"
 #include "raylib.h"
 #include "utils.h"
+#include <stdint.h>
 
 /*
  * Cards
@@ -37,6 +38,12 @@ typedef struct {
   bool isFinished;
 } Card;
 
+typedef struct {
+  Card *items;
+  int32_t length;
+  int32_t capacity;
+} CardArray;
+
 /*
  * Letter
  */
@@ -47,7 +54,7 @@ typedef struct {
   Animation *animation; // TODO: To be moved inside the envelope data
   int current_card_index;
   int numberOfCards;
-  Card *cards[];
+  CardArray *cards;
 } Letter;
 
 #endif

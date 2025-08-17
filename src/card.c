@@ -1,18 +1,19 @@
 #include "card.h"
 #include "animation.h"
+#include "custom_arrays.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "utils.h"
 
-Card *CreateCard(Arena *arena, CardParams cardParams) {
-  Card *card = arena_alloc(arena, sizeof(Card));
+Card CreateCard(CardParams cardParams) {
+  Card card;
 
-  card->cardType = cardParams.cardType;
-  card->cardData = cardParams.cardData;
-  card->texture = cardParams.cardTexture;
-  card->pos = (Vector2){0, 0};
-  card->showState = INVISIBLE;
-  card->isFinished = false;
+  card.cardType = cardParams.cardType;
+  card.cardData = cardParams.cardData;
+  card.texture = cardParams.cardTexture;
+  card.pos = (Vector2){0, 0};
+  card.showState = INVISIBLE;
+  card.isFinished = false;
 
   return card;
 }
@@ -28,7 +29,9 @@ void UpdateCard(Letter *letter, Card *card) {
     if (card->showState == VISIBLE) {
 
       if (letter->current_card_index < letter->numberOfCards - 1) {
-        letter->cards[letter->current_card_index + 1]->showState = ENTER;
+        CardArray_At(letter->cards, letter->current_card_index + 1)->showState =
+            ENTER;
+        // letter->cards[letter->current_card_index + 1]->showState = ENTER;
       }
 
       if (IsKeyPressed(KEY_SPACE)) {
@@ -68,7 +71,8 @@ void UpdateCard(Letter *letter, Card *card) {
         card->showState = EXIT;
 
         if (letter->current_card_index < letter->numberOfCards - 1) {
-          letter->cards[letter->current_card_index + 1]->showState = ENTER;
+          CardArray_At(letter->cards, letter->current_card_index + 1)
+              ->showState = ENTER;
         }
       }
     }
@@ -82,7 +86,8 @@ void UpdateCard(Letter *letter, Card *card) {
 
       if (letter->current_card_index < letter->numberOfCards - 1) {
         letter->current_card_index++;
-        letter->cards[letter->current_card_index]->showState = VISIBLE;
+        CardArray_At(letter->cards, letter->current_card_index)->showState =
+            VISIBLE;
       }
     }
   case DONE:
@@ -116,7 +121,20 @@ void DrawCard(Letter *letter, Card *card) {
     DrawText(card->cardData.cardTextData.text, textPos.x, textPos.y, 15, BLACK);
     break;
   }
-  case CARD_IMAGE:
+  case CARD_IMAGE: {
+    Vector2 scaledDimensions = ScalePointBasedOnRef(
+        card->cardData.cardImageData.texture.width,
+        (Vector2){card->cardData.cardImageData.texture.width,
+                  card->cardData.cardImageData.texture.height});
+    int half_padding = GetWindowPadding() / 2;
+    Rectangle expandedRec = (Rectangle){half_padding, globalPos.y,
+                                        scaledDimensions.x, scaledDimensions.y};
+
+    DrawTexturePro(card->cardData.cardImageData.texture,
+                   letter->animation->frame_rec, expandedRec, (Vector2){0, 0},
+                   0, WHITE);
+
     break;
+  }
   }
 }

@@ -1,7 +1,6 @@
 #ifndef CARD_H
 #define CARD_H
 
-#include "arena.h"
 #include "raylib.h"
 #include "types.h"
 
@@ -11,7 +10,7 @@ typedef struct {
   Texture2D cardTexture;
 } CardParams;
 
-Card *CreateCard(Arena *arena, CardParams cardParams);
+Card CreateCard(CardParams cardParams);
 void UpdateCard(Letter *letter, Card *card);
 void DrawCard(Letter *letter, Card *card);
 

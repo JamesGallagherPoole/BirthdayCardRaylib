@@ -1,6 +1,7 @@
 #include "letter.h"
 #include "animation.h"
 #include "card.h"
+#include "custom_arrays.h"
 #include "raylib.h"
 #include "types.h"
 #include "utils.h"
@@ -9,13 +10,13 @@
 
 Letter *CreateLetter(Arena *arena) {
   size_t numberOfCards = 3;
-  Letter *letter =
-      arena_alloc(arena, sizeof(Letter) + sizeof(Card *) * numberOfCards);
+  Letter *letter = arena_alloc(arena, sizeof(Letter));
 
   letter->pos = (Vector2){0, -200};
   letter->slideSpeed = 400;
   letter->showState = INVISIBLE;
   letter->current_card_index = 0;
+  letter->cards = CardArray_Create(arena, numberOfCards);
 
   letter->numberOfCards = numberOfCards;
   AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
@@ -27,7 +28,8 @@ Letter *CreateLetter(Arena *arena) {
   strcpy(cardData.cardEnvelopeData.subtitle, "This is a subtitle text");
   CardParams envelopeParams = {CARD_ENVELOPE, cardData,
                                LoadTexture("assets/envelope.png")};
-  letter->cards[0] = CreateCard(arena, envelopeParams);
+
+  CardArray_Push(letter->cards, CreateCard(envelopeParams));
 
   // First Card
   // TODO: Move card background to a shared handle or pointer
@@ -35,7 +37,7 @@ Letter *CreateLetter(Arena *arena) {
   strcpy(firstCardData.cardTextData.text, "First Card!");
   CardParams firstCardParams = {CARD_TEXT, firstCardData,
                                 LoadTexture("assets/inner_card.png")};
-  letter->cards[1] = CreateCard(arena, firstCardParams);
+  CardArray_Push(letter->cards, CreateCard(firstCardParams));
 
   // Second Card
   CardData secondCardData;
@@ -44,7 +46,7 @@ Letter *CreateLetter(Arena *arena) {
   CardParams secondCardParams = {CARD_IMAGE, secondCardData,
                                  LoadTexture("assets/inner_card.png")};
 
-  letter->cards[2] = CreateCard(arena, secondCardParams);
+  CardArray_Push(letter->cards, CreateCard(secondCardParams));
 
   return letter;
 }
@@ -55,8 +57,8 @@ void UpdateLetter(Letter *letter) {
   int screen_width = GetScreenWidth();
   int screen_height = GetScreenHeight();
 
-  Vector2 desired_dimensions =
-      GetScaledUpDimensions(200, letter->cards[0]->texture.height);
+  Vector2 desired_dimensions = GetScaledUpDimensions(
+      200, CardArray_At(letter->cards, 0)->texture.height);
 
   int center_y = (int)(screen_height / 2) - (int)(desired_dimensions.y / 2);
 
@@ -71,11 +73,11 @@ void UpdateLetter(Letter *letter) {
     } else {
       letter->showState = VISIBLE;
       // Set the first card (envelope) as visible
-      letter->cards[0]->showState = VISIBLE;
+      CardArray_At(letter->cards, 0)->showState = VISIBLE;
     }
     break;
   case VISIBLE:
-    UpdateCard(letter, letter->cards[letter->current_card_index]);
+    UpdateCard(letter, CardArray_At(letter->cards, letter->current_card_index));
     break;
   case EXIT:
     break;
@@ -86,18 +88,21 @@ void UpdateLetter(Letter *letter) {
 
 void DrawLetter(Letter *letter) {
   if (letter->current_card_index < letter->numberOfCards - 1) {
-    if (letter->cards[letter->current_card_index + 1]->showState == ENTER) {
-      DrawCard(letter, letter->cards[letter->current_card_index + 1]);
+    if (CardArray_At(letter->cards, letter->current_card_index + 1)
+            ->showState == ENTER) {
+      DrawCard(letter,
+               CardArray_At(letter->cards, letter->current_card_index + 1));
     }
   }
 
-  DrawCard(letter, letter->cards[letter->current_card_index]);
+  DrawCard(letter, CardArray_At(letter->cards, letter->current_card_index));
 }
 
 void DrawLetterUi(Letter *letter) {
   int screenHeight = GetScreenHeight();
-  if (letter->cards[letter->current_card_index]->showState == VISIBLE &&
-      letter->cards[letter->current_card_index]->isFinished) {
+  if (CardArray_At(letter->cards, letter->current_card_index)->showState ==
+          VISIBLE &&
+      CardArray_At(letter->cards, letter->current_card_index)->isFinished) {
     DrawText("Press Space to Continue", 40, screenHeight - 30, 20, DARKGRAY);
   }
 
