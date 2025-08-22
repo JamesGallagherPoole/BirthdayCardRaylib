@@ -60,14 +60,23 @@ void UpdateCard(Letter *letter, Card *card) {
       card->isFinished = true;
     }
     break;
-  case CARD_BOAT:
-    if (card->cardData.askoyBoatData.boatPosX >= 550) {
+  case CARD_BOAT: {
+    AskoyBoatData *data = &card->cardData.askoyBoatData;
+
+    // TODO: Make this contentRec global and quit this duplication nonsense
+    Vector2 globalPos = Vector2Add(letter->pos, card->pos);
+    Vector2 desired_dimensions =
+        GetScaledUpDimensions(200, card->texture.height);
+    int half_padding = GetWindowPadding() / 2;
+    Rectangle contentRec = (Rectangle){
+        half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
+    int maxX = contentRec.width - (contentRec.width / 3);
+
+    if (!card->isFinished && data->boatPosX >= maxX && IsKeyUp(KEY_SPACE)) {
       card->isFinished = true;
     }
 
-    AskoyBoatData *data = &card->cardData.askoyBoatData;
-
-    if (IsKeyDown(KEY_SPACE)) {
+    if (IsKeyDown(KEY_SPACE) && data->boatPosX < maxX) {
       data->boatVelX += data->accel * GetFrameTime();
     } else {
       // Apply friction
@@ -84,6 +93,7 @@ void UpdateCard(Letter *letter, Card *card) {
     data->boatVelX = Clamp(data->boatVelX, 0, data->boatTopSpeed);
     data->boatPosX += data->boatVelX * GetFrameTime();
     break;
+  }
   }
 
   switch (card->showState) {
@@ -105,7 +115,7 @@ void UpdateCard(Letter *letter, Card *card) {
     break;
   case EXIT:
     // Animate Out
-    if (card->pos.y < screen_height + 200) {
+    if (card->pos.y < screen_height + 150) {
       card->pos.y += letter->slideSpeed * GetFrameTime();
     } else {
       card->showState = DONE;
@@ -184,8 +194,17 @@ void DrawCard(Letter *letter, Card *card) {
   case CARD_BOAT: {
     AskoyBoatData *data = &card->cardData.askoyBoatData;
 
+    Vector2 globalPos = Vector2Add(letter->pos, card->pos);
+
+    Vector2 desired_dimensions =
+        GetScaledUpDimensions(200, card->texture.height);
+    int half_padding = GetWindowPadding() / 2;
+    Rectangle contentRec = (Rectangle){
+        half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
+
     Vector2 globalBoatPos =
-        (Vector2){globalPos.x - 250 + data->boatPosX, globalPos.y + 250};
+        (Vector2){contentRec.x + (contentRec.width / 10) + data->boatPosX,
+                  contentRec.y + 250};
 
     DrawTexture(data->boatTex, globalBoatPos.x, globalBoatPos.y, WHITE);
     break;

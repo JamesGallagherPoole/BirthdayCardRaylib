@@ -13,7 +13,7 @@ Letter *CreateLetter(Arena *arena) {
   Letter *letter = arena_alloc(arena, sizeof(Letter));
 
   letter->pos = (Vector2){0, -200};
-  letter->slideSpeed = 400;
+  letter->slideSpeed = 450;
   letter->showState = INVISIBLE;
   letter->current_card_index = 0;
   letter->cards = CardArray_Create(arena, numberOfCards);
@@ -36,9 +36,9 @@ Letter *CreateLetter(Arena *arena) {
   boatCardData.askoyBoatData.boatPosX = 0.0f;
   boatCardData.askoyBoatData.boatVelX = 0.0f;
   boatCardData.askoyBoatData.boatAccelX = 0.0f;
-  boatCardData.askoyBoatData.boatTopSpeed = 70.0f;
-  boatCardData.askoyBoatData.accel = 100.0f;
-  boatCardData.askoyBoatData.friction = 50.0f;
+  boatCardData.askoyBoatData.boatTopSpeed = 90.0f;
+  boatCardData.askoyBoatData.accel = 200.0f;
+  boatCardData.askoyBoatData.friction = 100.0f;
   CardParams boatCardParams = {CARD_BOAT, boatCardData,
                                LoadTexture("assets/inner_card.png")};
   CardArray_Push(letter->cards, CreateCard(boatCardParams));
