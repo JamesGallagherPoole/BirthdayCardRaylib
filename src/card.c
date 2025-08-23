@@ -79,7 +79,23 @@ void UpdateCard(Letter *letter, Card *card) {
 
     switch (data->state) {
     case BOAT: {
-      int maxX = contentRec.width - (contentRec.width / 3);
+
+      // Todo: Duplicate Code Start - Refactor
+      Vector2 globalPos = Vector2Add(letter->pos, card->pos);
+
+      Vector2 desired_dimensions =
+          GetScaledUpDimensions(200, card->texture.height);
+      int half_padding = GetWindowPadding() / 2;
+      Rectangle cardRect =
+          (Rectangle){half_padding, globalPos.y, desired_dimensions.x,
+                      desired_dimensions.y};
+      int32_t inner_pad = 70;
+      Rectangle content = (Rectangle){
+          cardRect.x + inner_pad, cardRect.y + inner_pad,
+          cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
+      // Duplicate code end
+
+      int maxX = content.width - (content.width / 3);
 
       if (data->boatPosX >= maxX && (IsKeyPressed(KEY_SPACE) ||
                                      IsMouseButtonPressed(MOUSE_BUTTON_LEFT))) {
@@ -250,7 +266,7 @@ void DrawCard(Letter *letter, Card *card) {
     AskoyBoatData *data = &card->cardData.askoyBoatData;
 
     // Inner content
-    int32_t inner_pad = 50;
+    int32_t inner_pad = 70;
     Rectangle content = (Rectangle){
         cardRect.x + inner_pad, cardRect.y + inner_pad,
         cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
