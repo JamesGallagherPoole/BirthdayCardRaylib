@@ -72,29 +72,51 @@ void UpdateCard(Letter *letter, Card *card) {
     int half_padding = GetWindowPadding() / 2;
     Rectangle contentRec = (Rectangle){
         half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
-    int maxX = contentRec.width - (contentRec.width / 3);
 
-    if (!card->isFinished && data->boatPosX >= maxX && IsKeyUp(KEY_SPACE)) {
-      card->isFinished = true;
-    }
+    switch (data->state) {
+    case BOAT: {
+      int maxX = contentRec.width - (contentRec.width / 3);
 
-    if (IsKeyDown(KEY_SPACE) && data->boatPosX < maxX) {
-      data->boatVelX += data->accel * GetFrameTime();
-    } else {
-      // Apply friction
-      int32_t sign;
-      if (data->boatVelX >= 0) {
-        sign = 1;
+      if (!card->isFinished && data->boatPosX >= maxX && IsKeyUp(KEY_SPACE)) {
+        data->state = ARRIVED_ASKOY;
       }
-      if (data->boatVelX < 0) {
-        sign = -1;
-      }
-      data->boatVelX -= sign * data->friction * GetFrameTime();
-    }
 
-    data->boatVelX = Clamp(data->boatVelX, 0, data->boatTopSpeed);
-    data->boatPosX += data->boatVelX * GetFrameTime();
-    break;
+      if (IsKeyDown(KEY_SPACE) && data->boatPosX < maxX) {
+        data->boatVelX += data->accel * GetFrameTime();
+      } else {
+        // Apply friction
+        int32_t sign;
+        if (data->boatVelX >= 0) {
+          sign = 1;
+        }
+        if (data->boatVelX < 0) {
+          sign = -1;
+        }
+        data->boatVelX -= sign * data->friction * GetFrameTime();
+      }
+
+      data->boatVelX = Clamp(data->boatVelX, 0, data->boatTopSpeed);
+      data->boatPosX += data->boatVelX * GetFrameTime();
+      break;
+    }
+    case ARRIVED_ASKOY:
+      data->timer += GetFrameTime();
+      if (data->timer > 2.0f) {
+        if (IsKeyPressed(KEY_SPACE)) {
+          data->state = RELAXED_ASKOY;
+          data->timer = 0.0f;
+        }
+      }
+    case RELAXED_ASKOY:
+      data->timer += GetFrameTime();
+      if (data->timer > 2.0f) {
+        if (IsKeyPressed(KEY_SPACE)) {
+          card->isFinished = true;
+          data->timer = 0.0f;
+        }
+      }
+      break;
+    }
   }
   }
 
@@ -212,25 +234,46 @@ void DrawCard(Letter *letter, Card *card) {
     Rectangle contentRec = (Rectangle){
         half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
 
-    DrawTexturePro(data->oceanBackground,
-                   (Rectangle){0, 0, (float)data->oceanBackground.width,
-                               (float)data->oceanBackground.height},
-                   contentRec, (Vector2){0, 0}, 0, WHITE);
+    switch (data->state) {
+    case BOAT:
+      DrawTexturePro(data->oceanBackground,
+                     (Rectangle){0, 0, (float)data->oceanBackground.width,
+                                 (float)data->oceanBackground.height},
+                     contentRec, (Vector2){0, 0}, 0, WHITE);
 
-    Vector2 globalBoatPos = (Vector2){-data->boatPosX, 20};
+      Vector2 globalBoatPos = (Vector2){-data->boatPosX, 20};
 
-    DrawTexturePro(data->boatTex,
-                   (Rectangle){0, 0, (float)data->oceanBackground.width,
-                               (float)data->oceanBackground.height},
-                   contentRec, globalBoatPos, 0, WHITE);
+      DrawTexturePro(data->boatTex,
+                     (Rectangle){0, 0, (float)data->boatTex.width,
+                                 (float)data->boatTex.height},
+                     contentRec, globalBoatPos, 0, WHITE);
 
-    // DrawTexture(data->boatTex, globalBoatPos.x, globalBoatPos.y, WHITE);
+      // DrawTexture(data->boatTex, globalBoatPos.x, globalBoatPos.y, WHITE);
 
-    if (card->showState == VISIBLE) {
-      DrawText("Trykk til å kjøre til Askøy...", 50, GetScreenHeight() - 50, 20,
-               DARKBLUE);
+      if (card->showState == VISIBLE) {
+        DrawText("Trykk til å kjøre til Askøy...", 50, GetScreenHeight() - 50,
+                 20, DARKBLUE);
+      }
+      break;
+
+    case ARRIVED_ASKOY:
+      DrawTexturePro(data->hytteOne,
+                     (Rectangle){0, 0, (float)data->hytteOne.width,
+                                 (float)data->hytteOne.height},
+                     contentRec, (Vector2){0, 0}, 0, WHITE);
+
+      if (data->timer > 2.0f) {
+        DrawText("Trykk til å slappe av...", 50, GetScreenHeight() - 50, 20,
+                 DARKBLUE);
+      }
+      break;
+    case RELAXED_ASKOY:
+      DrawTexturePro(data->hytteTwo,
+                     (Rectangle){0, 0, (float)data->hytteOne.width,
+                                 (float)data->hytteOne.height},
+                     contentRec, (Vector2){0, 0}, 0, WHITE);
+      break;
     }
-    break;
   }
   }
   }

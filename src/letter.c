@@ -47,6 +47,10 @@ Letter *CreateLetter(Arena *arena) {
   boatCardData.askoyBoatData.oceanBackground =
       LoadTexture("assets/askoy_ocean.png");
   boatCardData.askoyBoatData.boatTex = LoadTexture("assets/Boat.png");
+  boatCardData.askoyBoatData.hytteOne = LoadTexture("assets/Hytte1.png");
+  boatCardData.askoyBoatData.hytteTwo = LoadTexture("assets/Hytte2.png");
+  boatCardData.askoyBoatData.state = BOAT;
+  boatCardData.askoyBoatData.timer = 0.0f;
   boatCardData.askoyBoatData.boatPosX = 0.0f;
   boatCardData.askoyBoatData.boatVelX = 0.0f;
   boatCardData.askoyBoatData.boatAccelX = 0.0f;

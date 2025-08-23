@@ -32,15 +32,21 @@ typedef struct {
   Color textColour;
 } CardImageData;
 
+typedef enum { BOAT, ARRIVED_ASKOY, RELAXED_ASKOY } AskoyState;
+
 typedef struct {
   Texture2D oceanBackground;
   Texture2D boatTex;
+  Texture2D hytteOne;
+  Texture2D hytteTwo;
+  AskoyState state;
   float_t boatPosX;
   float_t boatAccelX;
   float_t boatVelX;
   float_t boatTopSpeed;
   float_t accel;
   float_t friction;
+  float timer;
 } AskoyBoatData;
 
 typedef union {
