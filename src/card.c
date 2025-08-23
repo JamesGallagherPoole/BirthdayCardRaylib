@@ -36,12 +36,13 @@ void UpdateCard(Letter *letter, Card *card) {
         // letter->cards[letter->current_card_index + 1]->showState = ENTER;
       }
 
-      if (IsKeyPressed(KEY_SPACE)) {
+      if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         PlayAnimation(letter->animation);
         PlaySound(letter->sounds.tear);
       }
 
-      if (IsKeyReleased(KEY_SPACE)) {
+      if (IsKeyReleased(KEY_SPACE) ||
+          IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
         StopAnimation(letter->animation);
         PauseSound(letter->sounds.tear);
       }
@@ -77,11 +78,13 @@ void UpdateCard(Letter *letter, Card *card) {
     case BOAT: {
       int maxX = contentRec.width - (contentRec.width / 3);
 
-      if (!card->isFinished && data->boatPosX >= maxX && IsKeyUp(KEY_SPACE)) {
+      if (!card->isFinished && data->boatPosX >= maxX && IsKeyUp(KEY_SPACE) &&
+          IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
         data->state = ARRIVED_ASKOY;
       }
 
-      if (IsKeyDown(KEY_SPACE) && data->boatPosX < maxX) {
+      if ((IsKeyDown(KEY_SPACE) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) &&
+          data->boatPosX < maxX) {
         data->boatVelX += data->accel * GetFrameTime();
       } else {
         // Apply friction
@@ -102,7 +105,8 @@ void UpdateCard(Letter *letter, Card *card) {
     case ARRIVED_ASKOY:
       data->timer += GetFrameTime();
       if (data->timer > 2.0f) {
-        if (IsKeyPressed(KEY_SPACE)) {
+        if (IsKeyPressed(KEY_SPACE) ||
+            IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
           data->state = RELAXED_ASKOY;
           data->timer = 0.0f;
         }
@@ -110,7 +114,8 @@ void UpdateCard(Letter *letter, Card *card) {
     case RELAXED_ASKOY:
       data->timer += GetFrameTime();
       if (data->timer > 2.0f) {
-        if (IsKeyPressed(KEY_SPACE)) {
+        if (IsKeyPressed(KEY_SPACE) ||
+            IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
           card->isFinished = true;
           data->timer = 0.0f;
         }
@@ -127,7 +132,7 @@ void UpdateCard(Letter *letter, Card *card) {
   case VISIBLE:
     if (card->isFinished) {
       // Press again to dismiss
-      if (IsKeyPressed(KEY_SPACE)) {
+      if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         card->showState = EXIT;
 
         // Little jammed in

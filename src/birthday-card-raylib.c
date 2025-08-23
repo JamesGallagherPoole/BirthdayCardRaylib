@@ -69,6 +69,8 @@ static void UpdateDrawFrame(void) {
     if (GetScreenHeight() > GetScreenWidth()) {
       DrawText("Rotate phone to landscape to begin...", 50,
                GetScreenHeight() / 2, 30, DARKBLUE);
+
+      EndDrawing();
       return;
     }
 
