@@ -13,6 +13,8 @@ Vector3 cubePosition = {0};
 Letter *letter = NULL;
 Arena *arena = NULL;
 
+bool gameBegan = false;
+
 static void UpdateDrawFrame(void); // Update and one frame
 
 int main() {
@@ -61,6 +63,24 @@ int main() {
 
 // Update and draw game frame
 static void UpdateDrawFrame(void) {
+  if (!gameBegan) {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    if (GetScreenHeight() > GetScreenWidth()) {
+      DrawText("Rotate phone to landscape to begin...", 50,
+               GetScreenHeight() / 2, 30, DARKBLUE);
+      return;
+    }
+
+    DrawText("Press screen to begin...", 50, GetScreenHeight() / 2, 30,
+             DARKBLUE);
+    if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+      gameBegan = 1;
+    }
+    EndDrawing();
+    return;
+  }
+
   UpdateLetter(letter);
 
   //----------------------------------------------------------------------------------
