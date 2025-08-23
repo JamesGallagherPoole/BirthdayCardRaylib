@@ -38,18 +38,16 @@ void UpdateCard(Letter *letter, Card *card) {
 
       if (IsKeyPressed(KEY_SPACE)) {
         PlayAnimation(letter->animation);
+        PlaySound(letter->sounds.tear);
       }
 
       if (IsKeyReleased(KEY_SPACE)) {
         StopAnimation(letter->animation);
+        PauseSound(letter->sounds.tear);
       }
 
       if (letter->animation->is_finished) {
         card->isFinished = true;
-
-        if (!IsSoundPlaying(letter->sounds.intro)) {
-          PlaySound(letter->sounds.intro);
-        }
       }
     }
 
@@ -109,6 +107,13 @@ void UpdateCard(Letter *letter, Card *card) {
       // Press again to dismiss
       if (IsKeyPressed(KEY_SPACE)) {
         card->showState = EXIT;
+
+        // Little jammed in
+        if (card->cardType == CARD_ENVELOPE) {
+          if (!IsSoundPlaying(letter->sounds.intro)) {
+            PlaySound(letter->sounds.intro);
+          }
+        }
 
         if (letter->current_card_index < letter->numberOfCards - 1) {
           CardArray_At(letter->cards, letter->current_card_index + 1)
@@ -206,11 +211,24 @@ void DrawCard(Letter *letter, Card *card) {
     Rectangle contentRec = (Rectangle){
         half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
 
-    Vector2 globalBoatPos =
-        (Vector2){contentRec.x + (contentRec.width / 10) + data->boatPosX,
-                  contentRec.y + 250};
+    DrawTexturePro(data->oceanBackground,
+                   (Rectangle){0, 0, (float)data->oceanBackground.width,
+                               (float)data->oceanBackground.height},
+                   contentRec, (Vector2){0, 0}, 0, WHITE);
 
-    DrawTexture(data->boatTex, globalBoatPos.x, globalBoatPos.y, WHITE);
+    Vector2 globalBoatPos = (Vector2){-data->boatPosX, 20};
+
+    DrawTexturePro(data->boatTex,
+                   (Rectangle){0, 0, (float)data->oceanBackground.width,
+                               (float)data->oceanBackground.height},
+                   contentRec, globalBoatPos, 0, WHITE);
+
+    // DrawTexture(data->boatTex, globalBoatPos.x, globalBoatPos.y, WHITE);
+
+    if (card->showState == VISIBLE) {
+      DrawText("Trykk til å kjøre til Askøy...", 50, GetScreenHeight() - 50, 20,
+               DARKBLUE);
+    }
     break;
   }
   }

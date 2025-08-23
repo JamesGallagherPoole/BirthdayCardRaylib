@@ -18,6 +18,7 @@ Letter *CreateLetter(Arena *arena) {
   letter->current_card_index = 0;
   letter->cards = CardArray_Create(arena, numberOfCards);
   letter->sounds.intro = LoadSound("assets/bad_penny.ogg");
+  letter->sounds.tear = LoadSound("assets/tear.ogg");
 
   letter->numberOfCards = numberOfCards;
   AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
@@ -25,15 +26,27 @@ Letter *CreateLetter(Arena *arena) {
 
   // Envelope
   CardData cardData;
-  strcpy(cardData.cardEnvelopeData.title, "Happy Birthday");
+  strcpy(cardData.cardEnvelopeData.title, "Til Ørnulf...");
   strcpy(cardData.cardEnvelopeData.subtitle, "This is a subtitle text");
   CardParams envelopeParams = {CARD_ENVELOPE, cardData,
                                LoadTexture("assets/envelope.png")};
 
   CardArray_Push(letter->cards, CreateCard(envelopeParams));
 
+  // Second Card
+  CardData secondCardData;
+  secondCardData.cardImageData.texture = LoadTexture("assets/rory.png");
+  secondCardData.cardImageData.textColour = WHITE;
+  // strcpy(secondCardData.cardImageData.text, "This is an image caption");
+  CardParams secondCardParams = {CARD_IMAGE, secondCardData,
+                                 LoadTexture("assets/inner_card.png")};
+
+  CardArray_Push(letter->cards, CreateCard(secondCardParams));
+
   CardData boatCardData;
-  boatCardData.askoyBoatData.boatTex = LoadTexture("assets/fergen.png");
+  boatCardData.askoyBoatData.oceanBackground =
+      LoadTexture("assets/askoy_ocean.png");
+  boatCardData.askoyBoatData.boatTex = LoadTexture("assets/Boat.png");
   boatCardData.askoyBoatData.boatPosX = 0.0f;
   boatCardData.askoyBoatData.boatVelX = 0.0f;
   boatCardData.askoyBoatData.boatAccelX = 0.0f;
@@ -51,16 +64,6 @@ Letter *CreateLetter(Arena *arena) {
   CardParams firstCardParams = {CARD_TEXT, firstCardData,
                                 LoadTexture("assets/inner_card.png")};
   CardArray_Push(letter->cards, CreateCard(firstCardParams));
-
-  // Second Card
-  CardData secondCardData;
-  secondCardData.cardImageData.texture = LoadTexture("assets/james.jpg");
-  secondCardData.cardImageData.textColour = WHITE;
-  strcpy(secondCardData.cardImageData.text, "This is an image caption");
-  CardParams secondCardParams = {CARD_IMAGE, secondCardData,
-                                 LoadTexture("assets/inner_card.png")};
-
-  CardArray_Push(letter->cards, CreateCard(secondCardParams));
 
   return letter;
 }

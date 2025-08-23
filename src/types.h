@@ -33,6 +33,7 @@ typedef struct {
 } CardImageData;
 
 typedef struct {
+  Texture2D oceanBackground;
   Texture2D boatTex;
   float_t boatPosX;
   float_t boatAccelX;
@@ -66,6 +67,7 @@ typedef struct {
 
 typedef struct {
   Sound intro;
+  Sound tear;
 } Sounds;
 
 /*

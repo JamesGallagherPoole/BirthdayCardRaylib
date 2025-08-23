@@ -47,6 +47,7 @@ int main() {
 #endif
 
   UnloadSound(letter->sounds.intro);
+  UnloadSound(letter->sounds.tear);
   CloseAudioDevice();
 
   // De-Initialization
