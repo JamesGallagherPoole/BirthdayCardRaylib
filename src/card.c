@@ -88,11 +88,15 @@ void UpdateCard(Letter *letter, Card *card) {
 
       if ((IsKeyDown(KEY_SPACE) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) &&
           data->boatPosX < maxX) {
-        SetSoundVolume(letter->sounds.intro, 0.3);
-        PlaySound(letter->sounds.boatBop);
+        if (!IsSoundPlaying(letter->sounds.boatBop)) {
+          SetSoundVolume(letter->sounds.intro, 0.1);
+          PlaySound(letter->sounds.boatBop);
+        }
         data->boatVelX += data->accel * GetFrameTime();
       } else {
-        PauseSound(letter->sounds.boatBop);
+        if (IsSoundPlaying(letter->sounds.boatBop)) {
+          PauseSound(letter->sounds.boatBop);
+        }
         // Apply friction
         int32_t sign;
         if (data->boatVelX >= 0) {
@@ -109,18 +113,24 @@ void UpdateCard(Letter *letter, Card *card) {
       break;
     }
     case ARRIVED_ASKOY:
-      StopSound(letter->sounds.boatBop);
+      if (!IsSoundPlaying(letter->sounds.boatBop)) {
+        StopSound(letter->sounds.boatBop);
+      }
       data->timer += GetFrameTime();
-      if (data->timer > 2.0f) {
+      if (data->timer > 4.0f) {
         if (IsKeyPressed(KEY_SPACE) ||
             IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
           data->state = RELAXED_ASKOY;
           data->timer = 0.0f;
         }
       }
+      break;
     case RELAXED_ASKOY:
+      if (!IsSoundPlaying(letter->sounds.ahhh)) {
+        PlaySound(letter->sounds.ahhh);
+      }
       data->timer += GetFrameTime();
-      if (data->timer > 2.0f) {
+      if (data->timer > 3.0f) {
         if (IsKeyPressed(KEY_SPACE) ||
             IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
           card->isFinished = true;
@@ -261,8 +271,14 @@ void DrawCard(Letter *letter, Card *card) {
                      bgDst, globalBoatPos, 0, WHITE);
 
       if (card->showState == VISIBLE) {
-        DrawText("Trykk til å kjøre til Askøy...", 40, GetScreenHeight() - 30,
-                 20, DARKGRAY);
+        int maxX = content.width - (content.width / 3);
+        if (data->boatPosX >= maxX) {
+          DrawText("Trykk til å gå til hytten...", 40, GetScreenHeight() - 30,
+                   20, DARKGRAY);
+        } else {
+          DrawText("Trykk til å kjøre til Askøy...", 40, GetScreenHeight() - 30,
+                   20, DARKGRAY);
+        }
       }
       break;
     }

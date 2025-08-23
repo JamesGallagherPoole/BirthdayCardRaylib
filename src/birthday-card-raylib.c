@@ -51,6 +51,7 @@ int main() {
   UnloadSound(letter->sounds.intro);
   UnloadSound(letter->sounds.tear);
   UnloadSound(letter->sounds.boatBop);
+  UnloadSound(letter->sounds.ahhh);
   CloseAudioDevice();
 
   // De-Initialization
@@ -94,9 +95,6 @@ static void UpdateDrawFrame(void) {
   ClearBackground(RAYWHITE);
 
   DrawLetterUi(letter);
-  DrawText("Happy Birthday", 10, 40, 20, DARKGRAY);
-
-  DrawFPS(10, 10);
 
   EndDrawing();
   //----------------------------------------------------------------------------------

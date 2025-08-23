@@ -75,6 +75,7 @@ typedef struct {
   Sound intro;
   Sound tear;
   Sound boatBop;
+  Sound ahhh;
 } Sounds;
 
 /*

@@ -20,6 +20,7 @@ Letter *CreateLetter(Arena *arena) {
   letter->sounds.intro = LoadSound("assets/bad_penny.ogg");
   letter->sounds.tear = LoadSound("assets/tear.ogg");
   letter->sounds.boatBop = LoadSound("assets/boat bop.ogg");
+  letter->sounds.ahhh = LoadSound("assets/ahhh.ogg");
 
   letter->numberOfCards = numberOfCards;
   AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
