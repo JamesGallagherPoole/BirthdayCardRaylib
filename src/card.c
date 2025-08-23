@@ -38,7 +38,9 @@ void UpdateCard(Letter *letter, Card *card) {
 
       if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         PlayAnimation(letter->animation);
-        PlaySound(letter->sounds.tear);
+        if (!card->isFinished) {
+          PlaySound(letter->sounds.tear);
+        }
       }
 
       if (IsKeyReleased(KEY_SPACE) ||
@@ -49,6 +51,7 @@ void UpdateCard(Letter *letter, Card *card) {
 
       if (letter->animation->is_finished) {
         card->isFinished = true;
+        StopSound(letter->sounds.tear);
       }
     }
 
@@ -78,15 +81,18 @@ void UpdateCard(Letter *letter, Card *card) {
     case BOAT: {
       int maxX = contentRec.width - (contentRec.width / 3);
 
-      if (!card->isFinished && data->boatPosX >= maxX && IsKeyUp(KEY_SPACE) &&
-          IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
+      if (data->boatPosX >= maxX && (IsKeyPressed(KEY_SPACE) ||
+                                     IsMouseButtonPressed(MOUSE_BUTTON_LEFT))) {
         data->state = ARRIVED_ASKOY;
       }
 
       if ((IsKeyDown(KEY_SPACE) || IsMouseButtonDown(MOUSE_BUTTON_LEFT)) &&
           data->boatPosX < maxX) {
+        SetSoundVolume(letter->sounds.intro, 0.3);
+        PlaySound(letter->sounds.boatBop);
         data->boatVelX += data->accel * GetFrameTime();
       } else {
+        PauseSound(letter->sounds.boatBop);
         // Apply friction
         int32_t sign;
         if (data->boatVelX >= 0) {
@@ -103,6 +109,7 @@ void UpdateCard(Letter *letter, Card *card) {
       break;
     }
     case ARRIVED_ASKOY:
+      StopSound(letter->sounds.boatBop);
       data->timer += GetFrameTime();
       if (data->timer > 2.0f) {
         if (IsKeyPressed(KEY_SPACE) ||
@@ -138,7 +145,7 @@ void UpdateCard(Letter *letter, Card *card) {
         // Little jammed in
         if (card->cardType == CARD_ENVELOPE) {
           if (!IsSoundPlaying(letter->sounds.intro)) {
-            SetSoundVolume(letter->sounds.intro, 0.7);
+            SetSoundVolume(letter->sounds.intro, 0.5);
             PlaySound(letter->sounds.intro);
           }
         }
@@ -254,8 +261,8 @@ void DrawCard(Letter *letter, Card *card) {
                      bgDst, globalBoatPos, 0, WHITE);
 
       if (card->showState == VISIBLE) {
-        DrawText("Trykk til å kjøre til Askøy...", 50, GetScreenHeight() - 50,
-                 20, DARKBLUE);
+        DrawText("Trykk til å kjøre til Askøy...", 40, GetScreenHeight() - 30,
+                 20, DARKGRAY);
       }
       break;
     }
@@ -263,8 +270,8 @@ void DrawCard(Letter *letter, Card *card) {
       DrawTexturePro(data->hytteOne, bgSrc, bgDst, (Vector2){0, 0}, 0, WHITE);
 
       if (data->timer > 2.0f) {
-        DrawText("Trykk til å slappe av...", 50, GetScreenHeight() - 50, 20,
-                 DARKBLUE);
+        DrawText("Trykk til å slappe av...", 40, GetScreenHeight() - 30, 20,
+                 DARKGRAY);
       }
       break;
     case RELAXED_ASKOY:

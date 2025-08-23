@@ -19,6 +19,7 @@ Letter *CreateLetter(Arena *arena) {
   letter->cards = CardArray_Create(arena, numberOfCards);
   letter->sounds.intro = LoadSound("assets/bad_penny.ogg");
   letter->sounds.tear = LoadSound("assets/tear.ogg");
+  letter->sounds.boatBop = LoadSound("assets/boat bop.ogg");
 
   letter->numberOfCards = numberOfCards;
   AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
@@ -124,7 +125,7 @@ void DrawLetterUi(Letter *letter) {
   if (CardArray_At(letter->cards, letter->current_card_index)->showState ==
           VISIBLE &&
       CardArray_At(letter->cards, letter->current_card_index)->isFinished) {
-    DrawText("Press Space to Continue", 40, screenHeight - 30, 20, DARKGRAY);
+    DrawText("Trykk til å forsette...", 40, screenHeight - 30, 20, DARKGRAY);
   }
 
   // TODO: Call Card specific Ui

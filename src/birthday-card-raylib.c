@@ -50,6 +50,7 @@ int main() {
 
   UnloadSound(letter->sounds.intro);
   UnloadSound(letter->sounds.tear);
+  UnloadSound(letter->sounds.boatBop);
   CloseAudioDevice();
 
   // De-Initialization
