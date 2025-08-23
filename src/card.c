@@ -168,15 +168,30 @@ void UpdateCard(Letter *letter, Card *card) {
   }
 }
 
+static Rectangle FitInto(Rectangle bounds, float srcW, float srcH) {
+  if (srcW <= 0 || srcH <= 0)
+    return (Rectangle){bounds.x, bounds.y, 0, 0};
+  float sx = bounds.width / srcW;
+  float sy = bounds.height / srcH;
+  float s = (sx < sy) ? sx : sy; // contain
+  float w = srcW * s;
+  float h = srcH * s;
+  float x = bounds.x + (bounds.width - w) * 0.5f;
+  float y = bounds.y + (bounds.height - h) * 0.5f;
+  return (Rectangle){x, y, w, h};
+}
+
 void DrawCard(Letter *letter, Card *card) {
   Vector2 globalPos = Vector2Add(letter->pos, card->pos);
 
   Vector2 desired_dimensions = GetScaledUpDimensions(200, card->texture.height);
   int half_padding = GetWindowPadding() / 2;
-  Rectangle expandedRec = (Rectangle){
-      half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
+  Rectangle cardRect = (Rectangle){half_padding, globalPos.y,
+                                   desired_dimensions.x, desired_dimensions.y};
 
-  DrawTexturePro(card->texture, letter->animation->frame_rec, expandedRec,
+  DrawTexturePro(card->texture,
+                 letter->animation->frame_rec, // source frame
+                 cardRect,                     // destination background area
                  (Vector2){0, 0}, 0, WHITE);
 
   switch (card->cardType) {
@@ -197,32 +212,18 @@ void DrawCard(Letter *letter, Card *card) {
   case CARD_IMAGE: {
     Texture2D tex = card->cardData.cardImageData.texture;
 
-    Vector2 size = GetScaledUpDimensions(200, card->texture.height);
-
-    Rectangle cardRect = (Rectangle){half_padding, globalPos.y, size.x, size.y};
-
-    // Inner content area
-    int32_t inner_pad = 50;
+    // Inner content area inside the card
+    int32_t inner_pad = 70;
     Rectangle content = (Rectangle){
         cardRect.x + inner_pad, cardRect.y + inner_pad,
         cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
 
-    // Fit image into content box, preserving aspect
-    float sx = content.width / (float)tex.width;
-    float sy = content.height / (float)tex.height;
-    float s = (sx < sy) ? sx : sy;
-
-    float w = tex.width * s;
-    float h = tex.height * s;
-    float x = content.x + (content.width - w) * 0.5f;
-    float y = content.y + (content.height - h) * 0.5f;
-
-    // Draw full texture -> fitted destination
+    // Fit the IMAGE into the content box
+    Rectangle dst = FitInto(content, (float)tex.width, (float)tex.height);
     Rectangle src = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
-    Rectangle dst = (Rectangle){x, y, w, h};
-
     DrawTexturePro(tex, src, dst, (Vector2){0, 0}, 0, WHITE);
 
+    // Caption
     Vector2 textPos =
         Vector2Add(globalPos, ScalePointBasedOnRef(200, (Vector2){0, 100}));
     DrawText(card->cardData.cardImageData.text, textPos.x, textPos.y, 20,
@@ -231,64 +232,35 @@ void DrawCard(Letter *letter, Card *card) {
   case CARD_BOAT: {
     AskoyBoatData *data = &card->cardData.askoyBoatData;
 
-    Texture2D tex = data->oceanBackground;
-
-    Vector2 globalPos = Vector2Add(letter->pos, card->pos);
-
-    Vector2 desired_dimensions =
-        GetScaledUpDimensions(200, card->texture.height);
-    int half_padding = GetWindowPadding() / 2;
-    Rectangle contentRec = (Rectangle){
-        half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
-
-    // TODO: This here is a mess, centralise this tfeck
-
-    Vector2 size = GetScaledUpDimensions(200, card->texture.height);
-
-    Rectangle cardRect = (Rectangle){half_padding, globalPos.y, size.x, size.y};
-
-    // Inner content area
+    // Inner content
     int32_t inner_pad = 50;
     Rectangle content = (Rectangle){
         cardRect.x + inner_pad, cardRect.y + inner_pad,
         cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
 
-    // Fit image into content box, preserving aspect
-    float sx = contentRec.width / (float)tex.width;
-    float sy = contentRec.height / (float)tex.height;
-    float s = (sx < sy) ? sx : sy;
-
-    float w = tex.width * s;
-    float h = tex.height * s;
-    float x = content.x + (content.width - w) * 0.5f;
-    float y = content.y + (content.height - h) * 0.5f;
-
-    // Draw full texture -> fitted destination
-    Rectangle src = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
-    Rectangle dst = (Rectangle){x, y, w, h};
+    Texture2D tex = data->oceanBackground;
+    Rectangle bgDst = FitInto(content, (float)tex.width, (float)tex.height);
+    Rectangle bgSrc = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
 
     switch (data->state) {
-    case BOAT:
-      DrawTexturePro(data->oceanBackground, src, dst, (Vector2){0, 0}, 0,
-                     WHITE);
+    case BOAT: {
+      DrawTexturePro(tex, bgSrc, bgDst, (Vector2){0, 0}, 0, WHITE);
 
       Vector2 globalBoatPos = (Vector2){-data->boatPosX, 20};
 
       DrawTexturePro(data->boatTex,
                      (Rectangle){0, 0, (float)data->boatTex.width,
                                  (float)data->boatTex.height},
-                     contentRec, globalBoatPos, 0, WHITE);
-
-      // DrawTexture(data->boatTex, globalBoatPos.x, globalBoatPos.y, WHITE);
+                     bgDst, globalBoatPos, 0, WHITE);
 
       if (card->showState == VISIBLE) {
         DrawText("Trykk til å kjøre til Askøy...", 50, GetScreenHeight() - 50,
                  20, DARKBLUE);
       }
       break;
-
+    }
     case ARRIVED_ASKOY:
-      DrawTexturePro(data->hytteOne, src, dst, (Vector2){0, 0}, 0, WHITE);
+      DrawTexturePro(data->hytteOne, bgSrc, bgDst, (Vector2){0, 0}, 0, WHITE);
 
       if (data->timer > 2.0f) {
         DrawText("Trykk til å slappe av...", 50, GetScreenHeight() - 50, 20,
@@ -296,7 +268,7 @@ void DrawCard(Letter *letter, Card *card) {
       }
       break;
     case RELAXED_ASKOY:
-      DrawTexturePro(data->hytteTwo, src, dst, (Vector2){0, 0}, 0, WHITE);
+      DrawTexturePro(data->hytteTwo, bgSrc, bgDst, (Vector2){0, 0}, 0, WHITE);
       break;
     }
   }

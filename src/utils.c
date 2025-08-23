@@ -2,30 +2,33 @@
 #include "raymath.h"
 
 // TODO: This is v rough. Tidy up and clarify naming
-Vector2 ScalePointBasedOnRef(int startWidth, Vector2 pointToScale) {
-  int screen_width = GetScreenWidth();
-
+Vector2 ScalePointBasedOnRef(int startWidth, Vector2 pt) {
+  int screenWidth = GetScreenWidth();
   int padding = GetWindowPadding();
+  int desiredW = screenWidth - padding;
 
-  int desired_width = screen_width - padding;
+  if (startWidth <= 0)
+    return (Vector2){0, 0};
 
-  int ratio = desired_width / startWidth;
-
-  return Vector2Scale(pointToScale, ratio);
+  float scale = (float)desiredW / (float)startWidth;
+  return Vector2Scale(pt, scale);
 }
 
+// Return the scaled card dimensions (keep aspect from the original texture
+// dims).
 Vector2 GetScaledUpDimensions(int start_width, int start_height) {
-  int screen_width = GetScreenWidth();
-
+  int screenWidth = GetScreenWidth();
   int padding = GetWindowPadding();
+  int desiredW = screenWidth - padding;
 
-  int desired_width = screen_width - padding;
+  if (start_width <= 0 || start_height <= 0)
+    return (Vector2){0, 0};
 
-  int ratio = desired_width / start_width;
+  float scale = (float)desiredW / (float)start_width;
+  float outW = (float)desiredW;
+  float outH = (float)start_height * scale;
 
-  int desired_height = start_height * ratio;
-
-  return (Vector2){desired_width, desired_height};
+  return (Vector2){outW, outH};
 }
 
 int GetWindowPadding(void) {
