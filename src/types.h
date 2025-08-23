@@ -64,6 +64,10 @@ typedef struct {
   int32_t capacity;
 } CardArray;
 
+typedef struct {
+  Sound intro;
+} Sounds;
+
 /*
  * Letter
  */
@@ -75,6 +79,7 @@ typedef struct {
   int current_card_index;
   int numberOfCards;
   CardArray *cards;
+  Sounds sounds;
 } Letter;
 
 #endif

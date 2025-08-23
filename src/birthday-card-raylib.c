@@ -27,6 +27,8 @@ int main() {
   SetConfigFlags(configFlags);
   InitWindow(screenWidth, screenHeight, "happy birthday again!");
 
+  InitAudioDevice();
+
   letter = CreateLetter(arena);
 
   camera.target = (Vector2){0.0f, 0.0f};
@@ -43,6 +45,9 @@ int main() {
     UpdateDrawFrame();
   }
 #endif
+
+  UnloadSound(letter->sounds.intro);
+  CloseAudioDevice();
 
   // De-Initialization
   arena_destroy(arena);

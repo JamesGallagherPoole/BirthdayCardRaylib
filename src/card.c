@@ -46,6 +46,10 @@ void UpdateCard(Letter *letter, Card *card) {
 
       if (letter->animation->is_finished) {
         card->isFinished = true;
+
+        if (!IsSoundPlaying(letter->sounds.intro)) {
+          PlaySound(letter->sounds.intro);
+        }
       }
     }
 

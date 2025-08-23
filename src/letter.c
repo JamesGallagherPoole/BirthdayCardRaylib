@@ -17,6 +17,7 @@ Letter *CreateLetter(Arena *arena) {
   letter->showState = INVISIBLE;
   letter->current_card_index = 0;
   letter->cards = CardArray_Create(arena, numberOfCards);
+  letter->sounds.intro = LoadSound("assets/bad_penny.ogg");
 
   letter->numberOfCards = numberOfCards;
   AnimationParams animationParams = {{0, 0, 200, 120}, 26, 0.03, false};
