@@ -226,6 +226,8 @@ void DrawCard(Letter *letter, Card *card) {
   case CARD_BOAT: {
     AskoyBoatData *data = &card->cardData.askoyBoatData;
 
+    Texture2D tex = data->oceanBackground;
+
     Vector2 globalPos = Vector2Add(letter->pos, card->pos);
 
     Vector2 desired_dimensions =
@@ -234,12 +236,36 @@ void DrawCard(Letter *letter, Card *card) {
     Rectangle contentRec = (Rectangle){
         half_padding, globalPos.y, desired_dimensions.x, desired_dimensions.y};
 
+    // TODO: This here is a mess, centralise this tfeck
+
+    Vector2 size = GetScaledUpDimensions(200, card->texture.height);
+
+    Rectangle cardRect = (Rectangle){half_padding, globalPos.y, size.x, size.y};
+
+    // Inner content area
+    int32_t inner_pad = 50;
+    Rectangle content = (Rectangle){
+        cardRect.x + inner_pad, cardRect.y + inner_pad,
+        cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
+
+    // Fit image into content box, preserving aspect
+    float sx = contentRec.width / (float)tex.width;
+    float sy = contentRec.height / (float)tex.height;
+    float s = (sx < sy) ? sx : sy;
+
+    float w = tex.width * s;
+    float h = tex.height * s;
+    float x = content.x + (content.width - w) * 0.5f;
+    float y = content.y + (content.height - h) * 0.5f;
+
+    // Draw full texture -> fitted destination
+    Rectangle src = (Rectangle){0, 0, (float)tex.width, (float)tex.height};
+    Rectangle dst = (Rectangle){x, y, w, h};
+
     switch (data->state) {
     case BOAT:
-      DrawTexturePro(data->oceanBackground,
-                     (Rectangle){0, 0, (float)data->oceanBackground.width,
-                                 (float)data->oceanBackground.height},
-                     contentRec, (Vector2){0, 0}, 0, WHITE);
+      DrawTexturePro(data->oceanBackground, src, dst, (Vector2){0, 0}, 0,
+                     WHITE);
 
       Vector2 globalBoatPos = (Vector2){-data->boatPosX, 20};
 
@@ -257,10 +283,7 @@ void DrawCard(Letter *letter, Card *card) {
       break;
 
     case ARRIVED_ASKOY:
-      DrawTexturePro(data->hytteOne,
-                     (Rectangle){0, 0, (float)data->hytteOne.width,
-                                 (float)data->hytteOne.height},
-                     contentRec, (Vector2){0, 0}, 0, WHITE);
+      DrawTexturePro(data->hytteOne, src, dst, (Vector2){0, 0}, 0, WHITE);
 
       if (data->timer > 2.0f) {
         DrawText("Trykk til å slappe av...", 50, GetScreenHeight() - 50, 20,
@@ -268,10 +291,7 @@ void DrawCard(Letter *letter, Card *card) {
       }
       break;
     case RELAXED_ASKOY:
-      DrawTexturePro(data->hytteTwo,
-                     (Rectangle){0, 0, (float)data->hytteOne.width,
-                                 (float)data->hytteOne.height},
-                     contentRec, (Vector2){0, 0}, 0, WHITE);
+      DrawTexturePro(data->hytteTwo, src, dst, (Vector2){0, 0}, 0, WHITE);
       break;
     }
   }
