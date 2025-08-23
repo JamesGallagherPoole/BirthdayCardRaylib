@@ -111,6 +111,7 @@ void UpdateCard(Letter *letter, Card *card) {
         // Little jammed in
         if (card->cardType == CARD_ENVELOPE) {
           if (!IsSoundPlaying(letter->sounds.intro)) {
+            SetSoundVolume(letter->sounds.intro, 0.7);
             PlaySound(letter->sounds.intro);
           }
         }

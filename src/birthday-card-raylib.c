@@ -72,9 +72,9 @@ static void UpdateDrawFrame(void) {
       return;
     }
 
-    DrawText("Press screen to begin...", 50, GetScreenHeight() / 2, 30,
+    DrawText("Click/Press screen to begin...", 50, GetScreenHeight() / 2, 30,
              DARKBLUE);
-    if (IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       gameBegan = 1;
     }
     EndDrawing();
