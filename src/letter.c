@@ -9,7 +9,7 @@
 #include <string.h>
 
 Letter *CreateLetter(Arena *arena) {
-  size_t numberOfCards = 5;
+  size_t numberOfCards = 6;
   Letter *letter = arena_alloc(arena, sizeof(Letter));
 
   letter->pos = (Vector2){0, -200};
@@ -45,6 +45,7 @@ Letter *CreateLetter(Arena *arena) {
 
   CardArray_Push(letter->cards, CreateCard(secondCardParams));
 
+  // Askoy
   CardData boatCardData;
   boatCardData.askoyBoatData.oceanBackground =
       LoadTexture("assets/askoy_ocean.png");
@@ -63,7 +64,17 @@ Letter *CreateLetter(Arena *arena) {
                                LoadTexture("assets/inner_card.png")};
   CardArray_Push(letter->cards, CreateCard(boatCardParams));
 
-  // Second Card
+  // Ma Da Card
+  CardData madaCardData;
+  madaCardData.cardImageData.texture = LoadTexture("assets/mada.png");
+  madaCardData.cardImageData.textColour = WHITE;
+  // strcpy(secondCardData.cardImageData.text, "This is an image caption");
+  CardParams madaCardParams = {CARD_IMAGE, madaCardData,
+                               LoadTexture("assets/inner_card.png")};
+
+  CardArray_Push(letter->cards, CreateCard(madaCardParams));
+
+  // end Card
   CardData endCardData;
   endCardData.cardImageData.texture = LoadTexture("assets/endcard.jpeg");
   endCardData.cardImageData.textColour = WHITE;
@@ -73,10 +84,10 @@ Letter *CreateLetter(Arena *arena) {
 
   CardArray_Push(letter->cards, CreateCard(endCardParams));
 
-  // First Card
+  // End Card
   // TODO: Move card background to a shared handle or pointer
   CardData firstCardData;
-  strcpy(firstCardData.cardTextData.text, "First Card!");
+  strcpy(firstCardData.cardTextData.text, "Det var det!");
   CardParams firstCardParams = {CARD_TEXT, firstCardData,
                                 LoadTexture("assets/inner_card.png")};
   CardArray_Push(letter->cards, CreateCard(firstCardParams));

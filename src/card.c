@@ -239,7 +239,8 @@ void DrawCard(Letter *letter, Card *card) {
   case CARD_TEXT: {
     Vector2 textPos =
         Vector2Add(globalPos, ScalePointBasedOnRef(200, (Vector2){0, 30}));
-    DrawText(card->cardData.cardTextData.text, textPos.x, textPos.y, 15, BLACK);
+    DrawText(card->cardData.cardTextData.text, textPos.x, textPos.y, 50,
+             DARKGRAY);
     break;
   }
   case CARD_IMAGE: {
