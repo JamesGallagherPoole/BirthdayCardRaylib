@@ -76,8 +76,12 @@ static void UpdateDrawFrame(void) {
       return;
     }
 
+    DrawText("Turn on the audio!", 50, GetScreenHeight() / 2 - 80, 30,
+             DARKBLUE);
+
     DrawText("Click/Press screen to begin...", 50, GetScreenHeight() / 2, 30,
              DARKBLUE);
+
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       gameBegan = 1;
     }

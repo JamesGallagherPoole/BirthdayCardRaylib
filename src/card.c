@@ -95,7 +95,7 @@ void UpdateCard(Letter *letter, Card *card) {
           cardRect.width - 2 * inner_pad, cardRect.height - 2 * inner_pad};
       // Duplicate code end
 
-      int maxX = content.width - (content.width / 3);
+      int maxX = content.width - (content.width / 2);
 
       if (data->boatPosX >= maxX && (IsKeyPressed(KEY_SPACE) ||
                                      IsMouseButtonPressed(MOUSE_BUTTON_LEFT))) {
@@ -288,7 +288,7 @@ void DrawCard(Letter *letter, Card *card) {
                      bgDst, globalBoatPos, 0, WHITE);
 
       if (card->showState == VISIBLE) {
-        int maxX = content.width - (content.width / 3);
+        int maxX = content.width - (content.width / 2);
         if (data->boatPosX >= maxX) {
           DrawText("Trykk til å gå til hytten...", 40, GetScreenHeight() - 30,
                    20, DARKGRAY);
