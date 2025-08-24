@@ -27,7 +27,7 @@ int main() {
 
   int configFlags = FLAG_WINDOW_RESIZABLE;
   SetConfigFlags(configFlags);
-  InitWindow(screenWidth, screenHeight, "happy birthday again!");
+  InitWindow(screenWidth, screenHeight, "Gratulerer med Dagen!");
 
   InitAudioDevice();
 

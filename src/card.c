@@ -133,7 +133,7 @@ void UpdateCard(Letter *letter, Card *card) {
         StopSound(letter->sounds.boatBop);
       }
       data->timer += GetFrameTime();
-      if (data->timer > 4.0f) {
+      if (data->timer > 3.0f) {
         if (IsKeyPressed(KEY_SPACE) ||
             IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
           data->state = RELAXED_ASKOY;
