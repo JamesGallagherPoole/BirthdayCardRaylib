@@ -30,8 +30,10 @@ Letter *CreateLetter(Arena *arena) {
   CardData cardData;
   strcpy(cardData.cardEnvelopeData.title, "Til Ørnulf...");
   strcpy(cardData.cardEnvelopeData.subtitle, "This is a subtitle text");
-  CardParams envelopeParams = {CARD_ENVELOPE, cardData,
-                               LoadTexture("assets/envelope.png")};
+  Texture2D envelopeTex = LoadTexture("assets/envelope.png");
+  SetTextureFilter(envelopeTex, TEXTURE_FILTER_BILINEAR);
+  SetTextureWrap(envelopeTex, TEXTURE_WRAP_CLAMP);
+  CardParams envelopeParams = {CARD_ENVELOPE, cardData, envelopeTex};
 
   CardArray_Push(letter->cards, CreateCard(envelopeParams));
 
